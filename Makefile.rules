@@ -45,14 +45,16 @@ ARCHIVE  ?= $(PKGNAME)
 
 .PHONY: all opt all-mt-vm opt-mt-vm all-mt-posix opt-mt-posix
 
-ARCHIVE_CMA ?= $(ARCHIVE).cma 
-ARCHIVE_CMXA ?= $(ARCHIVE).cmxa 
+ARCHIVE_CMA ?= $(ARCHIVE).cma
+ARCHIVE_CMXA ?= $(ARCHIVE).cmxa
+ARCHIVE_CMXS ?= $(ARCHIVE).cmxs
 ARCHIVE_P ?= $(ARCHIVE).p
 ARCHIVE_P_CMXA ?= $(ARCHIVE_P).cmxa
+ARCHIVE_P_CMXS ?= $(ARCHIVE_P).cmxs
 
 ALL ?= $(ARCHIVE_CMA) $(ALL_EXTRA) \
        all-mt-$(MT_TYPE)
-OPT ?= $(ARCHIVE_CMXA) $(OPT_EXTRA) \
+OPT ?= $(ARCHIVE_CMXA) $(ARCHIVE_CMXS) $(OPT_EXTRA) \
        opt-mt-$(MT_TYPE) opt-p-$(HAVE_GPROF) opt-mt-$(MT_TYPE)-p-$(HAVE_GPROF)
 
 all: $(ALL)
@@ -64,7 +66,7 @@ all-mt-posix: $(ALLMT_EXTRA)
 opt-mt-vm:
 opt-mt-posix: $(OPTMT_EXTRA)
 opt-p-0:
-opt-p-1: $(ARCHIVE_P_CMXA) $(OPTP_EXTRA)
+opt-p-1: $(ARCHIVE_P_CMXA) $(ARCHIVE_P_CMXS) $(OPTP_EXTRA)
 opt-mt-vm-p-0:
 opt-mt-posix-p-0:
 opt-mt-vm-p-1:
@@ -93,9 +95,15 @@ $(ARCHIVE_P_CMXA): $(XOBJECTS) $(COBJECTS)
 		$(OCAMLMKLIB) -o $(ARCHIVE_P) $(POBJECTS) $(COBJECTS) $(LINK_OPTIONS); \
 	fi
 
+$(ARCHIVE_CMXS): $(XOBJECTS) $(COBJECTS)
+	$(OCAMLOPT) -shared -o $(ARCHIVE_CMXS) $(COBJECTS) $(XOBJECTS)
+
+$(ARCHIVE_P_CMXS): $(XOBJECTS) $(COBJECTS)
+	$(OCAMLOPT) -shared -o $(ARCHIVE_P_CMXS) $(COBJECTS) $(POBJECTS)
+
 # Files to remove everywhere by "make clean":
 
-CLEAN_LIST = *.cmi *.cmo *.cma *.cmx *.o *.a *.cmxa dll* packlist-* \
+CLEAN_LIST = *.cmi *.cmo *.cma *.cmx *.o *.a *.cmxa *.cmxs dll* packlist-* \
 	     ocamldoc.dump META depend $(PACKLIST) $(GENERATE)
 
 # Generic build rules:
@@ -139,15 +147,15 @@ realinstall: install-$(INSTMETHOD) $(INSTOTHER) $(PACKLIST)
 
 
 .PHONY: uninstall
-uninstall: 
+uninstall:
 	@$(MAKE) -f Makefile.pre realuninstall
 
 .PHONY: realuninstall
-realuninstall: $(UNINSTOTHER) uninstall-$(INSTMETHOD) 
+realuninstall: $(UNINSTOTHER) uninstall-$(INSTMETHOD)
 
 .PHONY: install-findlib
 install-findlib: META
-	files=`$(COLLECT_FILES) *.mli *.cmi *.cma *.cmxa *.a dll* META $(INSTALL_EXTRA)` && \
+	files=`$(COLLECT_FILES) *.mli *.cmi *.cma *.cmxa *.cmxs *.a dll* META $(INSTALL_EXTRA)` && \
 	$(OCAMLFIND) install $(PKGNAME) $$files
 
 .PHONY: uninstall-findlib

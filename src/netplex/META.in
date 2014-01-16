@@ -4,4 +4,6 @@ requires = "equeue,netstring,rpc,netsys"
 archive(byte) = "netplex.cma"
 archive(native) = "netplex.cmxa"
 archive(native,gprof) = "netplex.p.cmxa"
+archive(native,plugin) = "netplex.cmxs"
+archive(native,plugin,gprof) = "netplex.p.cmxs"
 

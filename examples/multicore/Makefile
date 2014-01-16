@@ -4,7 +4,7 @@ OCAMLC=ocamlc
 # set to ocamlopt to get native executables
 
 clean:
-	rm -f *.cmi *.cmo *.cma *.cmx *.cmxa *.o *.a 
+	rm -f *.cmi *.cmo *.cma *.cmx *.cmxa *.o *.a
 	rm -f create_join chameneos pipeline nqueens
 
 create_join: create_join.ml

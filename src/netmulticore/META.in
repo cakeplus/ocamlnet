@@ -3,5 +3,7 @@ description = "Ocamlnet - Server framework"
 requires = "netplex,netcamlbox,netsys.outofheap"
 archive(byte) = "netmulticore.cma"
 archive(native) = "netmulticore.cmxa"
+archive(native,plugin) = "netmulticore.cmxs"
+archive(native,plugin,gprof) = "netmulticore.p.cmxs"
 archive(native,gprof) = "netmulticore.p.cmxa"
 
